@@ -177,6 +177,7 @@ function editPost($connect, $id, $data)
     $content = $data['content'];
     $status = $data['status'];
 
+
     if (!isset($_SESSION['auth']['user'])) {
         http_response_code(404);
         $res = [
@@ -185,16 +186,25 @@ function editPost($connect, $id, $data)
         ];
         echo json_encode($res);
     } else {
-        mysqli_query($connect, "UPDATE `posts` SET `title` = '$title', `content` = '$content', `status` = '$status' WHERE `posts`.`id` = '$id'");
+        if ((mb_strlen($title, 'UTF-8') < 5) || (mb_strlen($content, 'UTF-8') < 10)) {
+            http_response_code(404);
+            $res = [
+                "status" => false,
+                "message" => "The title must have 5 characters and the content must have more than 10",
+            ];
+            echo json_encode($res);
+        } else {
+            mysqli_query($connect, "UPDATE `posts` SET `title` = '$title', `content` = '$content', `status` = '$status' WHERE `posts`.`id` = '$id'");
 
-        http_response_code(200);
+            http_response_code(200);
 
-        $res = [
-            "status" => true,
-            "message" => "Post successfully updated",
-        ];
+            $res = [
+                "status" => true,
+                "message" => "Post successfully updated",
+            ];
 
-        echo json_encode($res);
+            echo json_encode($res);
+        }
     }
 }
 
