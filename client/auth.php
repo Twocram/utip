@@ -27,10 +27,6 @@ if (isset($_SESSION['auth']['user'])) {
 
         <div class="form-container">
             <div class="slider">
-                <div class="btns">
-                    <button class="login">Login</button>
-                    <button class="signup">Signup</button>
-                </div>
                 <div class="slide">
                     <div class="auth-slide__section">
                         <div class="auth-box box-login">
