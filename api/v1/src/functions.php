@@ -5,6 +5,14 @@ function logout($param)
     if ($param === 'logout') {
         session_start();
         session_destroy();
+        http_response_code(200);
+
+        $res = [
+            "status" => true,
+            "message" => "User logout",
+        ];
+
+        echo json_encode($res);
     }
 }
 
@@ -219,6 +227,8 @@ function deletePost($connect, $id)
 {
     session_start();
 
+    $sql = mysqli_query($connect, "SELECT * FROM `posts` WHERE `id` = '$id'");
+
     if (!isset($_SESSION['auth']['user'])) {
         http_response_code(404);
         $res = [
@@ -227,15 +237,25 @@ function deletePost($connect, $id)
         ];
         echo json_encode($res);
     } else {
-        mysqli_query($connect, "DELETE FROM `posts` WHERE `id`='$id'");
+        if (!mysqli_fetch_array($sql)) {
+            http_response_code(409);
+            $res = [
+                "status" => false,
+                "message" => "Post not found",
+            ];
+            echo json_encode($res);
+        } else {
 
-        http_response_code(200);
+            mysqli_query($connect, "DELETE FROM `posts` WHERE `id`='$id'");
 
-        $res = [
-            "status" => true,
-            "message" => "Post successfully deleted",
-        ];
+            http_response_code(200);
 
-        echo json_encode($res);
+            $res = [
+                "status" => true,
+                "message" => "Post successfully deleted",
+            ];
+
+            echo json_encode($res);
+        }
     }
 }
