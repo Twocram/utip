@@ -4,7 +4,7 @@ header('Content-type: application/json');
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require "./src/db/db_connect.php";
-require "./src/functions.php";
+require "./src/handlerMethods.php";
 
 $q = $_GET['q'];
 $method = $_SERVER['REQUEST_METHOD'];
