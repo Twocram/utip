@@ -193,6 +193,8 @@ function editPost($connect, $id, $data)
     $status = $data['status'];
 
 
+    $sql = mysqli_query($connect, "SELECT * FROM `posts` WHERE `id` = '$id'");
+
     if (!isset($_SESSION['auth']['user'])) {
         http_response_code(404);
         $res = [
@@ -209,16 +211,25 @@ function editPost($connect, $id, $data)
             ];
             echo json_encode($res);
         } else {
-            mysqli_query($connect, "UPDATE `posts` SET `title` = '$title', `content` = '$content', `status` = '$status' WHERE `posts`.`id` = '$id'");
+            if (!mysqli_fetch_array($sql)) {
+                http_response_code(409);
+                $res = [
+                    "status" => false,
+                    "message" => "Post not found",
+                ];
+                echo json_encode($res);
+            } else {
+                mysqli_query($connect, "UPDATE `posts` SET `title` = '$title', `content` = '$content', `status` = '$status' WHERE `posts`.`id` = '$id'");
 
-            http_response_code(200);
+                http_response_code(200);
 
-            $res = [
-                "status" => true,
-                "message" => "Post successfully updated",
-            ];
+                $res = [
+                    "status" => true,
+                    "message" => "Post successfully updated",
+                ];
 
-            echo json_encode($res);
+                echo json_encode($res);
+            }
         }
     }
 }
