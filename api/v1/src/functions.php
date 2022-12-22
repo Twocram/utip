@@ -85,6 +85,7 @@ function getPosts($connect, $data)
         $sort = strlen($data['sort']) ?  $data['sort'] : 'NULL';
         $page = strlen($data['page']) ?  $data['page'] : 'NULL';
 
+
         $offset = ($page - 1) * $sort;
 
         $count_sql = mysqli_query($connect, "SELECT COUNT(*) FROM `posts`");
@@ -92,7 +93,13 @@ function getPosts($connect, $data)
 
         $total_pages = ceil($total_rows / $sort);
 
-        $posts = mysqli_query($connect, "SELECT * FROM `posts` ORDER BY $filter LIMIT $offset, $sort");
+        if (isset($data['fields'])) {
+            $fields = implode(',', explode(',', $data['fields']));
+            $posts = mysqli_query($connect, "SELECT $fields FROM `posts` ORDER BY $filter LIMIT $offset, $sort");
+        } else {
+            $posts = mysqli_query($connect, "SELECT * FROM `posts` ORDER BY $filter LIMIT $offset, $sort");
+        }
+
 
         $postsList = [];
 
